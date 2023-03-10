@@ -4,6 +4,7 @@
             <div class="col-6 bg-light">
                 <span class="fs-4">ENTRADA DE DADOS</span>
                 <hr>
+                <!-- <form @submit.prevent="enviar()"> -->
                 <form>
                     <div class="mb-3 row">
                         <label class="col-3 col-form-label">Nome:</label>
@@ -127,24 +128,21 @@
                     <div class="mb-3 row">
                         <label class="col-3 col-form-label">Placa Veículo:</label>
                         <div class="col">
-                            <input type="text" class="form-control" v-model="form.placaVeiculo"
-                                v-maska="'AAA-####'">
+                            <input type="text" class="form-control" v-model="form.placaVeiculo" v-maska="'AAA-####'">
                             <small class="text-muted">Formato: AAA-1234</small>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-3 col-form-label">Placa Mercosul:</label>
                         <div class="col">
-                            <input type="text" class="form-control" v-model="form.placaVeiculoMercosul"
-                                v-maska="'AAA#A##'">
+                            <input type="text" class="form-control" v-model="form.placaVeiculoMercosul" v-maska="'AAA#A##'">
                             <small class="text-muted">Formato: BBB1A22</small>
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-3 col-form-label">RG:</label>
                         <div class="col">
-                            <input type="text" class="form-control" v-model="form.rg"
-                                v-maska="'#*-X'">
+                            <input type="text" class="form-control" v-model="form.rg" v-maska="'#*-X'">
                             <small class="text-muted">Formato: Sem padrão</small>
                         </div>
                     </div>
@@ -181,32 +179,49 @@
                     <div class="mb-3 row">
                         <label class="col-3 col-form-label">Cor:</label>
                         <div class="col">
-                            <input type="color" class="form-color">
+                            <input type="color" class="form-color" v-model="form.cor">
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-3 col-form-label">Valor limite:</label>
                         <div class="col">
-                            <input type="range" class="form-range" min="0" max="100" step="1">
+                            <input type="range" class="form-range" min="0" max="100" step="1" v-model="form.alcance">
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-3 col-form-label">Escondido:</label>
                         <div class="col">
-                            <input type="hidden" class="form-control">
+                            <input type="hidden" class="form-control" v-model="form.escondido">
                         </div>
                     </div>
                     <div class="mb-3 row">
                         <label class="col-3 col-form-label">Upload:</label>
                         <div class="col">
-                            <input type="file" class="form-control">
+                            <input type="file" class="form-control" multiple @change="selecionarArquivos($event)">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-3 col-form-label">Descrição:</label>
+                        <div class="col">
+                            <textarea class="form-control" rows="3" v-model="form.descricao"></textarea>
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label class="col-3 col-form-label">Cursos:</label>
+                        <div class="col">
+                            <select class="form-select" v-model="form.curso">
+                                <option value="" disabled>Selecione uma opção</option>
+                                <option v-for="curso in cursos" :key="curso.id">
+                                    {{ curso.curso }}
+                                </option>
+                            </select>
                         </div>
                     </div>
                     <hr>
                     <div class="mb-3 row">
                         <div class="col d-flex justify-content-between">
                             <button class="btn btn-secondary" type="reset">Limpar</button>
-                            <button class="btn btn-success" type="button">Enviar (btn)</button>
+                            <button class="btn btn-success" type="button" @click="enviar()">Enviar (btn)</button>
                             <button class="btn btn-success" type="submit">Enviar (submit)</button>
                         </div>
                     </div>
@@ -215,7 +230,7 @@
             </div>
 
 
-            <div class="col-6 text-white bg-secondary">
+            <div class="col-6 text-white bg-secondary" :style="'background-color:' + form.cor + '!important'">
                 <span class="fs-4">ESTADO DO OBJETO</span>
                 <hr>
                 <div class="mb-5 row">
@@ -316,16 +331,31 @@
                     <span>Hora: {{ form.hora }}</span>
                 </div>
                 <div class="mb-3 row">
-                    <span>Cor:</span>
+                    <span>Cor: {{ form.cor }}</span>
                 </div>
                 <div class="mb-3 row">
-                    <span>Valor limite:</span>
+                    <span>Valor limite: {{ form.alcance }}</span>
                 </div>
                 <div class="mb-3 row">
-                    <span>Escondido:</span>
+                    <span>Escondido: {{ form.escondido }}</span>
                 </div>
                 <div class="mb-3 row">
-                    <span>Upload:</span>
+                    <span>Upload: </span>
+                    <ul>
+                        <li v-for="(arquivo, index) in form.arquivos" :key="index">
+                            {{ arquivo.name }}
+                        </li>
+                    </ul>
+                </div>
+                <div class="mb-3 row">
+                    <span>Descrição: </span>
+                    <div style="white-space: pre">
+                        {{ form.descricao }}
+                    </div>
+                    <!-- <pre>{{ form.descricao }}</pre> -->
+                </div>
+                <div class="mb-3 row">
+                    <span>Curso: {{ form.curso }}</span>
                 </div>
             </div>
         </div>
@@ -334,12 +364,17 @@
 </template>
 
 <script>
-import  moment from 'moment'
+import moment from 'moment'
 
 export default {
     name: 'FormPage',
     data: () => ({
-        moment: {},
+        cursos: [
+            { id: 1, curso: 'Banco de Dados' },
+            { id: 2, curso: 'Python' },
+            { id: 3, curso: 'JavaScript' },
+            { id: 4, curso: 'Java' },
+        ],
         form: {
             nome: '',
             email: '',
@@ -360,11 +395,30 @@ export default {
             dataHoraLocal: '',
             mes: '',
             semana: '',
-            hora: ''
+            hora: '',
+            cor: '#6c757d',
+            alcance: 5,
+            escondido: 'escondido hehe',
+            arquivos: {},
+            descricao: '',
+            curso: ''
         },
     }),
     created() {
         this.moment = moment
+    },
+    methods: {
+        selecionarArquivos(e) {
+            this.form.arquivos = e.target.files
+        },
+        enviar() {
+
+            const formEnvio = Object.assign({}, this.form)
+            console.log(formEnvio)
+
+            //uma requisição http para o back-encd da aplicação
+            //promise que vai nos permitir tomar ações se a requisição deu certo ou errado
+        }
     }
 }
 </script>
