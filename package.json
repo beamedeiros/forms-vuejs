@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "bootstrap-icons": "^1.10.3",
     "core-js": "^3.8.3",
     "maska": "^1.5.0",
     "moment": "^2.29.1",

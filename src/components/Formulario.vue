@@ -5,7 +5,7 @@
                 <span class="fs-4">ENTRADA DE DADOS</span>
                 <hr>
                 <!-- <form @submit.prevent="enviar()"> -->
-                <form>
+                <form @reset.prevent="resetar()">
                     <div class="mb-3 row">
                         <label class="col-3 col-form-label">Nome:</label>
                         <div class="col">
@@ -217,15 +217,23 @@
                             </select>
                         </div>
                     </div>
-                    <hr>
+                    <div class="mb-3 row">
+                        <label class="col-3 col-form-label">Avaliação:</label>
+                        <div class="col">
+                            <InputEstrelas :numero-estrelas="5" @avaliar="form.avaliacao = $event"/>
+                            <!-- <InputEstrelas :numero-estrelas="5" v-model:avaliar="form.avaliacao"/> -->
+                            
+                        </div>
+                    </div>
+
                     <div class="mb-3 row">
                         <div class="col d-flex justify-content-between">
-                            <button class="btn btn-secondary" type="reset">Limpar</button>
+                            <button class="btn btn-secondary" type="reset">Limpar (reset)</button>
                             <button class="btn btn-success" type="button" @click="enviar()">Enviar (btn)</button>
                             <button class="btn btn-success" type="submit">Enviar (submit)</button>
                         </div>
                     </div>
-
+                    <hr>
                 </form>
             </div>
 
@@ -357,6 +365,9 @@
                 <div class="mb-3 row">
                     <span>Curso: {{ form.curso }}</span>
                 </div>
+                <div class="mb-3 row">
+                    <span>Avaliação: {{ form.avaliacao }}</span>
+                </div>
             </div>
         </div>
 
@@ -364,61 +375,92 @@
 </template>
 
 <script>
-import moment from 'moment'
+import InputEstrelas from './InputEstrelas.vue'
 
 export default {
-    name: 'FormPage',
+    name: "FormPage",
     data: () => ({
         cursos: [
-            { id: 1, curso: 'Banco de Dados' },
-            { id: 2, curso: 'Python' },
-            { id: 3, curso: 'JavaScript' },
-            { id: 4, curso: 'Java' },
+            { id: 1, curso: "Banco de Dados" },
+            { id: 2, curso: "Python" },
+            { id: 3, curso: "JavaScript" },
+            { id: 4, curso: "Java" },
         ],
         form: {
-            nome: '',
-            email: '',
-            senha: '',
-            idade: '',
-            licenca: 'SIM',
+            nome: "",
+            email: "",
+            senha: "",
+            idade: "",
+            licenca: "SIM",
             interesses: [],
-            genero: '',
-            telefone: '',
-            cep: '',
-            cpf: '',
-            cnpj: '',
-            cartaoDeCredito: '',
-            placaVeiculo: '',
-            placaVeiculoMercosul: '',
-            rg: '',
-            data: '',
-            dataHoraLocal: '',
-            mes: '',
-            semana: '',
-            hora: '',
-            cor: '#6c757d',
+            genero: "",
+            telefone: "",
+            cep: "",
+            cpf: "",
+            cnpj: "",
+            cartaoDeCredito: "",
+            placaVeiculo: "",
+            placaVeiculoMercosul: "",
+            rg: "",
+            data: "",
+            dataHoraLocal: "",
+            mes: "",
+            semana: "",
+            hora: "",
+            cor: "#6c757d",
             alcance: 5,
-            escondido: 'escondido hehe',
+            escondido: "escondido hehe",
             arquivos: {},
-            descricao: '',
-            curso: ''
+            descricao: "",
+            curso: ""
+        },
+        formEstadoInicial: {
+            nome: "Beatriz",
+            email: "",
+            senha: "1234",
+            idade: "",
+            licenca: "SIM",
+            interesses: [],
+            genero: "",
+            telefone: "",
+            cep: "",
+            cpf: "",
+            cnpj: "",
+            cartaoDeCredito: "",
+            placaVeiculo: "",
+            placaVeiculoMercosul: "",
+            rg: "",
+            data: "",
+            dataHoraLocal: "",
+            mes: "",
+            semana: "",
+            hora: "",
+            cor: "#6c757d",
+            alcance: 5,
+            escondido: "escondido hehe",
+            arquivos: {},
+            descricao: "",
+            curso: "",
+            avaliacao: 0
         },
     }),
     created() {
-        this.moment = moment
+        this.resetar();
     },
     methods: {
         selecionarArquivos(e) {
-            this.form.arquivos = e.target.files
+            this.form.arquivos = e.target.files;
         },
         enviar() {
-
-            const formEnvio = Object.assign({}, this.form)
-            console.log(formEnvio)
-
+            const formEnvio = Object.assign({}, this.form);
+            console.log(formEnvio);
             //uma requisição http para o back-encd da aplicação
             //promise que vai nos permitir tomar ações se a requisição deu certo ou errado
+        },
+        resetar() {
+            this.form = Object.assign({}, this.formEstadoInicial);
         }
-    }
+    },
+    components: { InputEstrelas }
 }
 </script>
